@@ -9,6 +9,10 @@ const loginSchema = z.object({
   password: z.string().min(6),
 })
 
+export async function GET() {
+  return NextResponse.json({ error: 'Method not allowed. Use POST for login.' }, { status: 405 })
+}
+
 /**
  * PROPERLY STRUCTURED LOGIN API HANDLER
  * Features:
@@ -94,13 +98,18 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    response.cookies.set('auth_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-    })
+    try {
+      response.cookies.set('auth_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+      })
+    } catch (cookieError: any) {
+      console.error('⚠️ Cookie setting failed:', cookieError.message)
+      // Still proceed, tokens are preferred in the body anyway
+    }
 
     return response
     
@@ -109,6 +118,8 @@ export async function POST(request: NextRequest) {
     console.error('💣 UNHANDLED LOGIN BUG:', globalError)
     return NextResponse.json({ 
       error: 'An unexpected error occurred. Please contact support.',
+      message: globalError.message,
+      stack: globalError.stack,
       details: process.env.NODE_ENV === 'development' ? globalError.message : undefined 
     }, { status: 500 })
   }
