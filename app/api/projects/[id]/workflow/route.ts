@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 import { getAuthUser } from '@/lib/auth'
 import { z } from 'zod'
 
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         label: n.data.label,
         positionX: n.position.x,
         positionY: n.position.y,
-        data: n.data,
+        data: n.data as Prisma.InputJsonValue,
       })),
     }),
     prisma.workflowEdge.createMany({
