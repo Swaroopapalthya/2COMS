@@ -11,7 +11,7 @@ const schema = z.object({
   clientId: z.string().min(1, 'Client is required'),
   projectName: z.string().min(2, 'Project name is required'),
   projectType: z.enum(['ON_SITE', 'OFF_SITE']),
-  trainingRequired: z.boolean().default(false),
+  trainingRequired: z.boolean(),
   description: z.string().optional(),
 })
 type FormData = z.infer<typeof schema>

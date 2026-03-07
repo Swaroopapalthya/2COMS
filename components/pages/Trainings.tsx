@@ -23,7 +23,7 @@ const schema = z.object({
   vendorId: z.string().min(1, 'Vendor required'),
   trainingType: z.enum(['COMPUTER_SKILLS', 'BUSINESS_SKILLS', 'LOGIC_SKILLS']),
   paymentSource: z.enum(['ABC_CORP', 'CLIENT', 'TRAINEE']),
-  certificationRequired: z.boolean().default(false),
+  certificationRequired: z.boolean(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
 })
