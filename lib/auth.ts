@@ -1,7 +1,9 @@
 import { NextRequest } from 'next/server'
 import { prisma } from './prisma'
-import { signToken, verifyToken } from './jwt'
-export * from './jwt'
+import { signToken, verifyToken, JWTPayload } from './jwt'
+
+export { signToken, verifyToken }
+export type { JWTPayload }
 
 export async function getAuthUser(request: NextRequest) {
   const authHeader = request.headers.get('authorization')
