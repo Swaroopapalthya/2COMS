@@ -1,0 +1,188 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ACCOUNT_MANAGER
+  CLIENT
+}
+
+enum ProjectType {
+  ON_SITE
+  OFF_SITE
+}
+
+enum TrainingType {
+  COMPUTER_SKILLS
+  BUSINESS_SKILLS
+  LOGIC_SKILLS
+}
+
+enum PaymentSource {
+  ABC_CORP
+  CLIENT
+  TRAINEE
+}
+
+enum HiringStatus {
+  INTERVIEW
+  SHORTLISTED
+  OFFER_LETTER
+  HIRED
+  REJECTED
+}
+
+enum TraineeStatus {
+  ACTIVE
+  TRAINING
+  CERTIFIED
+  INTERVIEWING
+  HIRED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(CLIENT)
+  clientId  String?
+  client    Client?  @relation(fields: [clientId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id          String         @id @default(cuid())
+  companyName String
+  contacts    ClientContact[]
+  projects    Project[]
+  users       User[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model ClientContact {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  contactName String
+  email       String
+  role        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Project {
+  id               String       @id @default(cuid())
+  clientId         String
+  client           Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  projectName      String
+  projectType      ProjectType
+  trainingRequired Boolean      @default(false)
+  description      String?
+  trainings        Training[]
+  trainees         Trainee[]
+  workflowNodes    WorkflowNode[]
+  workflowEdges    WorkflowEdge[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model Vendor {
+  id            String         @id @default(cuid())
+  name          String
+  email         String?
+  phone         String?
+  trainingTypes TrainingType[]
+  trainings     Training[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Training {
+  id                  String       @id @default(cuid())
+  projectId           String
+  project             Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  vendorId            String
+  vendor              Vendor       @relation(fields: [vendorId], references: [id])
+  trainingType        TrainingType
+  paymentSource       PaymentSource
+  certificationRequired Boolean   @default(false)
+  startDate           DateTime?
+  endDate             DateTime?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+}
+
+model WorkflowNode {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  nodeId    String
+  type      String
+  label     String
+  positionX Float
+  positionY Float
+  data      Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WorkflowEdge {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  edgeId     String
+  source     String
+  target     String
+  sourceHandle String?
+  targetHandle String?
+  label      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Trainee {
+  id                  String        @id @default(cuid())
+  projectId           String
+  project             Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name                String
+  email               String
+  phone               String?
+  skills              String[]
+  trainingStatus      TraineeStatus @default(ACTIVE)
+  certificationStatus Boolean       @default(false)
+  interviews          Interview[]
+  offer               Offer?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+}
+
+model Interview {
+  id          String       @id @default(cuid())
+  traineeId   String
+  trainee     Trainee      @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  scheduledAt DateTime
+  notes       String?
+  status      HiringStatus @default(INTERVIEW)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Offer {
+  id          String       @id @default(cuid())
+  traineeId   String       @unique
+  trainee     Trainee      @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  offerDate   DateTime     @default(now())
+  salary      Float?
+  status      HiringStatus @default(OFFER_LETTER)
+  notes       String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
