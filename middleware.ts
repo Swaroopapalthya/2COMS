@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { verifyToken } from './lib/auth'
+import { verifyToken } from './lib/jwt'
 
 const PUBLIC_PATHS = ['/login', '/api/auth/login', '/api/auth/register', '/api/ping', '/favicon.ico', '/_next']
 

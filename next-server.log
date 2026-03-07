@@ -1,0 +1,8 @@
+[2026-03-07T15:08:10.911Z] --- LOGIN INITIATED ---
+[2026-03-07T15:08:11.005Z] Body received for email: admin@2coms.com
+[2026-03-07T15:08:11.024Z] 🔑 Attempting login for: admin@2coms.com
+[2026-03-07T15:08:12.969Z] User found state: true
+[2026-03-07T15:08:14.409Z] Password match: true
+[2026-03-07T15:08:14.411Z] ✅ Success: admin@2coms.com
+[2026-03-07T15:08:14.473Z] JWT signed
+[2026-03-07T15:08:14.484Z] Cookie set

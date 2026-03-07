@@ -3,7 +3,6 @@ import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { signToken } from '@/lib/auth'
 import { z } from 'zod'
-
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
