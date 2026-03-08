@@ -3,16 +3,9 @@ import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { signToken } from '@/lib/jwt'
 import { z } from 'zod'
-import fs from 'fs'
-import path from 'path'
-
-const LOG_FILE = path.join(process.cwd(), 'next-server.log')
-
 function fileLog(msg: string) {
-  const time = new Date().toISOString()
-  try {
-    fs.appendFileSync(LOG_FILE, `[${time}] [REAL] ${msg}\n`)
-  } catch(e) {}
+  // Local file logging disabled in production for Vercel compatibility
+  console.log(`[REAL] ${msg}`);
 }
 
 const loginSchema = z.object({
